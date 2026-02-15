@@ -1,21 +1,27 @@
-import './App.css'
-import ValentineEnvelope from "./components/ValentineEnvelope";
 import HeartsBackground from "./components/HeartsBackground";
+import FloatingPhotos from "./components/FloatingPhotos";
+import ValentineEnvelope from "./components/ValentineEnvelope";
 
-function App() {
+export default function App() {
   return (
-    <div className="relative min-h-screen">
+    <div className="min-h-screen relative">
       <HeartsBackground count={22} />
 
-      {/* Your content goes above */}
-      <div className="relative z-10">
-        {/* <ValentineEnvelope /> */}
-        <div className="min-h-screen grid place-items-center">
-          <ValentineEnvelope />
-        </div>
+      <FloatingPhotos
+        photos={[
+          "/her/mi.png",
+          "/her/mi2.png",
+          "/her/mi3.png",
+          "/her/mi4.png",
+          "/her/mi5.png",
+        ]}
+        showMs={5500}
+        gapMs={100}
+      />
+
+      <div className="relative z-20">
+        <ValentineEnvelope />
       </div>
     </div>
-  )
+  );
 }
-
-export default App
