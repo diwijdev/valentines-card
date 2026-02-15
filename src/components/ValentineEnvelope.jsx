@@ -141,6 +141,32 @@ export default function ValentineEnvelope() {
   const lastPlayedRef = useRef({});
   const memeTokenRef = useRef(0);
 
+  // --- non-repeating "deck" per setName ---
+  const deckRef = useRef({}); // { [setName]: { bag: number[] } }
+
+  const shuffle = (arr) => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  const pickNoRepeat = (setName, arr) => {
+    if (!arr?.length) return null;
+
+    if (!deckRef.current[setName] || deckRef.current[setName].bag.length === 0) {
+      deckRef.current[setName] = {
+        bag: shuffle(Array.from({ length: arr.length }, (_, i) => i)),
+      };
+    }
+
+    const i = deckRef.current[setName].bag.pop();
+    return arr[i];
+  };
+
+
   const isVideoPath = (p) =>
     typeof p === "string" && /\.(mp4|webm|mov)$/i.test(p);
 
@@ -180,7 +206,7 @@ export default function ValentineEnvelope() {
     if (now - last < cooldownMs) return;
     lastPlayedRef.current[setName] = now;
 
-    const combo = pickRandom(set);
+    const combo = pickNoRepeat(setName, set);
     const token = ++memeTokenRef.current;
 
     clearMeme();
