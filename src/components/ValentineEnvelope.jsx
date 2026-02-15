@@ -223,15 +223,29 @@ export default function ValentineEnvelope() {
     if (!area) return;
 
     const rect = area.getBoundingClientRect();
-    const maxX = Math.max(0, rect.width - 140);
-    const maxY = Math.max(0, rect.height - 56);
 
-    const x = Math.random() * maxX - maxX / 2;
-    const y = Math.random() * maxY - maxY / 2;
+    const buttonWidth = 140;
+    const buttonHeight = 56;
+
+    const maxX = rect.width - buttonWidth;
+    const maxY = rect.height - buttonHeight;
+
+    // 🚫 reserve left half for Yes button
+    const rightZoneStart = rect.width * 0.55; // only allow movement in right 45%
+
+    const x =
+      Math.random() * (maxX - rightZoneStart) +
+      rightZoneStart -
+      rect.width / 2;
+
+    const y =
+      Math.random() * maxY -
+      maxY / 2;
 
     setNoPos({ x, y });
     setNoDodges((n) => n + 1);
   }
+
 
   // ================= ENVELOPE OPEN LOGIC =================
   const onOpen = () => {
@@ -526,14 +540,22 @@ export default function ValentineEnvelope() {
                                 minShowMs: 1000,
                               })
                             }
-                            onClick={() => {
-                              setAnswer("yes");
-                              playComboFrom("yesClick", {
-                                cooldownMs: 0,
-                                volume: 0.9,
-                                minShowMs: 1200,
-                              });
-                            }}
+                            onClick={async () => {
+                            if (answer === "yes") return; // prevent double click spam
+
+                            setAnswer("yes");
+
+                            await playComboFrom("yesClick", {
+                              cooldownMs: 0,
+                              volume: 0.9,
+                              minShowMs: 6400,
+                            });
+
+                            // small romantic pause before redirect
+                            setTimeout(() => {
+                              window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1";
+                            }, 6500);
+                          }}
                             type="button"
                           >
                             Yes 💗
@@ -569,6 +591,8 @@ export default function ValentineEnvelope() {
                         onClick={() => {
                           setAnswer(null);
                           setLetterSide("message");
+                          setNoPos({ x: 0, y: 0 });
+
                         }}
                         type="button"
                       >
